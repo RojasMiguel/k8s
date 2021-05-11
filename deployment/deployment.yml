@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kubernetes.io/change-cause: "cambio de puerto 8080"
+  name: deploy-tes
+  labels:
+    app: deploy-front
+spec:
+  #revisionHistoryLimit: 2
+  replicas: 3
+  selector:
+    matchLabels:
+      app: deploy-front
+  template:
+    metadata:
+      labels:
+        app: deploy-front
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:testfake
+        ports:
+          - containerPort: 8080

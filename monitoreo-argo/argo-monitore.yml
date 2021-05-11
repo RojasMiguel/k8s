@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: server-monitoreo-grafana
+spec:
+  destination:
+    name: in-cluster
+    namespace: monitoring
+  project: default
+  source:
+    path: monitoreo
+    repoURL: http://gitlab.com/miguelrojas/ingarch-k8s
+    targetRevision: master
+  syncPolicy:
+    automated: {}

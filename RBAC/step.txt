@@ -1,0 +1,36 @@
+
+#configure cluster
+kubeadm init   --pod-network-cidr=192.168.1.0/24   --control-plane-endpoint=k8s-master.ingarch.cl
+
+
+
+## Create keys and sign
+openssl genrsa -out mrojas.key 2048
+sudo openssl req -new -key mrojas.key -out mrojas.csr -subj "/CN=mrojas/O=admin"
+sudo openssl x509 -req -in mrojas.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out mrojas.crt -days 9999
+
+sudo openssl x509 -req -in mrojas.csr -CA /var/lib/k0s/pki/ca.crt -CAkey /var/lib/k0s/pki/ca.key -CAcreateserial -out mrojas.crt -days 9999
+
+openssl x509 -in  mrojas.crt  -noout -text
+
+
+## Configure kubectl for user
+
+kubectl config set-cluster kubernetes --server=https://k8s-master.ingarch.cl:6443 --certificate-authority=/etc/kubernetes/pki/ca.crt
+
+kubectl config set-cluster local --server=192.168.1.102:6443 --certificate-authority=~/certs-k0s/ca.crt
+
+kubectl config set-cluster k0s --server=geminis.ingarch.cl:6443  --certificate-authority=~/certs-k0s/ca.crt
+
+
+kubectl config set-credentials mrojas --client-certificate=mrojas.crt --client-key=mrojas.key
+
+
+#kubectl config set-credentials mrojas --client-certificate=mrojas.crt --client-key=mrojas.key
+
+#kubectl config set-context mrojas --cluster=kubernetes --user=mrojas
+
+kubectl config set-context mrojas --cluster=local --user=mrojas
+
+kubectl config use-context mrojas
+

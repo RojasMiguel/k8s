@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kubernetes.io/change-cause: "Pagina Web con Servicio"
+  name: deploy-tes
+  labels:
+    app: deploy-front
+spec:
+  #revisionHistoryLimit: 2
+  replicas: 3
+  selector:
+    matchLabels:
+      app: deploy-front
+  template:
+    metadata:
+      labels:
+        app: deploy-front
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+  labels:
+    app: deploy-front
+spec:
+  type: ClusterIP
+  selector:
+    app: deploy-front
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 80

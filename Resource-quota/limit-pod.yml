@@ -1,0 +1,43 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name:  desa
+  labels:
+    name: desa
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: res-limit-pod
+  namespace: desa
+spec:
+  hard:
+    pods: "3"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: desa
+  annotations:
+    kubernetes.io/change-cause: "deploy with limit pod"
+  name: deploy-limit-pod
+  labels:
+    app: deploy-limit-pod
+spec:
+  #revisionHistoryLimit: 2
+  replicas: 4
+  selector:
+    matchLabels:
+      app: deploy-limit-pod
+  template:
+    metadata:
+      labels:
+        app: deploy-limit-pod
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        ports:
+          - containerPort: 8080
+---
